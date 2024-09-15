@@ -3,9 +3,16 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { v4 as uuid } from "uuid";
 import { retry } from "rxjs";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Product } from "./entities/product.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class ProductsService {
+  constructor(
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>
+  ) {}
   private products: CreateProductDto[] = [
     {
       productId: uuid(),
@@ -31,14 +38,12 @@ export class ProductsService {
   ];
 
   create(createProductDto: CreateProductDto) {
-    if (!createProductDto.productId) createProductDto.productId = uuid();
-    createProductDto.productId = uuid();
-    this.products.push(createProductDto);
-    return createProductDto;
+    const product = this.productRepository.save(createProductDto);
+    return product;
   }
 
   findAll() {
-    return this.products;
+    return this.productRepository.find();
   }
 
   findOne(id: string) {
