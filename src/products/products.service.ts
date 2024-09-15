@@ -47,11 +47,9 @@ export class ProductsService {
   }
 
   findOne(id: string) {
-    const productFound = this.products.filter(
-      (product) => product.productId === id
-    )[0];
-    if (!productFound) throw new NotFoundException();
-    return productFound;
+    const product = this.productRepository.findOneBy({ productId: id });
+    if (!product) throw new NotFoundException();
+    return product;
   }
 
   findByProvider(provider: string) {
@@ -63,20 +61,19 @@ export class ProductsService {
     return prouctFound;
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
-    let product = this.findOne(id);
-    this.products = this.products.map((product) => {
-      if (product.productId === id) {
-        product = { ...product, ...updateProductDto };
-      }
-      return product;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const productToUpdate = await this.productRepository.preload({
+      productId: id,
+      ...updateProductDto,
     });
-    return { ...product, ...updateProductDto };
+    if (!productToUpdate) throw new NotFoundException();
+    this.productRepository.save(productToUpdate);
+    return productToUpdate;
   }
 
   remove(id: string) {
-    const { productId } = this.findOne(id);
-    this.products = this.products.filter((product) => product.productId !== id);
-    return this.products;
+    this.findOne(id);
+    this.productRepository.delete({ productId: id });
+    return { message: `This action removed a #${id} product` };
   }
 }
