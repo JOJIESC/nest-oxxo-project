@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
+import { Location } from "src/locations/entities/location.entity";
 @Entity()
 export class Manager {
   @PrimaryGeneratedColumn("uuid")
@@ -12,4 +13,7 @@ export class Manager {
   @Column("text")
   managerPhoneNumber: string;
   //Relation locations
+
+  @OneToOne(() => Location)
+  location: Location;
 }
