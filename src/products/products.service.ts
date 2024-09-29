@@ -31,7 +31,11 @@ export class ProductsService {
 
   findByProvider(provider: string) {
     //This actions returns all products by provider
-    return "OK";
+    return this.productRepository.findBy({
+      provider: {
+        providerId: provider,
+      },
+    });
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {

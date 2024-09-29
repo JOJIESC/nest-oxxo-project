@@ -4,6 +4,8 @@ import { UpdateProviderDto } from "./dto/update-provider.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Provider } from "./entities/provider.entity";
+import { Like } from "typeorm";
+import { NotFoundException } from "@nestjs/common";
 
 @Injectable()
 export class ProvidersService {
@@ -16,18 +18,34 @@ export class ProvidersService {
   }
 
   findAll() {
-    return `This action returns all providers`;
+    return this.providersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} provider`;
+  async findOneByName(name: string) {
+    const provider = await this.providersRepository.findBy({
+      providerName: Like(`%${name}%`),
+    });
+    if (!provider) throw new NotFoundException();
+    return provider;
   }
 
-  update(id: number, updateProviderDto: UpdateProviderDto) {
-    return `This action updates a #${id} provider`;
+  findOne(id: string) {
+    return this.providersRepository.findOneBy({
+      providerId: id,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} provider`;
+  async update(id: string, updateProviderDto: UpdateProviderDto) {
+    const product = await this.providersRepository.preload({
+      providerId: id,
+      ...updateProviderDto,
+    });
+    return this.providersRepository.save(product);
+  }
+
+  remove(id: string) {
+    this.providersRepository.delete({
+      providerId: id,
+    });
   }
 }
