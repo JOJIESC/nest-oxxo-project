@@ -4,12 +4,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export class Employee {
   @PrimaryGeneratedColumn()
   employeeId: string;
-  @Column("text")
+  @Column({ type: "text" })
   name: string;
-  @Column("text")
+  @Column({ type: "text" })
   lastName: string;
-  @Column("text")
+  @Column({ type: "text" })
   phoneNumber: string;
-  @Column("text")
+  @Column({ type: "text" })
   email: string;
 }
