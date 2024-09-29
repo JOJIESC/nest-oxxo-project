@@ -6,8 +6,13 @@ import { CreateUserDto } from "./dto/create-user.dto";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post("signup")
   signUp(@Body() CreateUserDto: CreateUserDto) {
-    this.authService.registerUser(CreateUserDto);
+    return this.authService.registerUser(CreateUserDto);
+  }
+
+  @Post("login")
+  login(@Body() CreateUserDto: CreateUserDto) {
+    return this.authService.loginUser(CreateUserDto);
   }
 }

@@ -20,7 +20,10 @@ export class AuthService {
         userEmail: createUserDto.userEmail,
       },
     });
-    const match = bcrypt.compare(createUserDto.userPassword, user.userPassword);
+    const match = await bcrypt.compare(
+      createUserDto.userPassword,
+      user.userPassword
+    );
     if (!match) return new UnauthorizedException("Invalid credentials");
     return;
   }
