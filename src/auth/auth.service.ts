@@ -1,30 +1,37 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
+import { Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-
+import { LoginUserDto } from "./dto/login-user.dto";
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private jwtService: JwtService
   ) {}
   registerUser(createUserDto: CreateUserDto) {
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
-    this.userRepository.save(createUserDto);
+    return this.userRepository.save(createUserDto);
   }
-  async loginUser(createUserDto: CreateUserDto) {
+  async loginUser(loginUserDto: LoginUserDto) {
     const user = await this.userRepository.findOne({
       where: {
-        userEmail: createUserDto.userEmail,
+        userEmail: loginUserDto.userEmail,
       },
     });
     const match = await bcrypt.compare(
-      createUserDto.userPassword,
+      loginUserDto.userPassword,
       user.userPassword
     );
-    if (!match) return new UnauthorizedException("Invalid credentials");
-    return;
+    if (!match) throw new UnauthorizedException("No estas autorizado");
+    const payload = {
+      user: user.userEmail,
+      password: user.userPassword,
+    };
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 }

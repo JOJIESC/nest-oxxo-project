@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ProvidersService } from "./providers.service";
 import { CreateProviderDto } from "./dto/create-provider.dto";
 import { UpdateProviderDto } from "./dto/update-provider.dto";
 import { NotFoundException } from "@nestjs/common";
+import { AuthGuard } from "src/auth/guards/auth.guard";
 
 @Controller("providers")
 export class ProvidersController {
