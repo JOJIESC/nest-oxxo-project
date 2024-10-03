@@ -29,7 +29,7 @@ export class ProvidersController {
 
   @Get()
   findAll(@UserData() user: User) {
-    if (!user.userRoles)
+    if (user.userRoles.includes("Employee"))
       throw new UnauthorizedException(
         "No estas autorizado, solo admins pueden ver los proveedores"
       );
