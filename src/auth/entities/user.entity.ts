@@ -17,9 +17,13 @@ export class User {
   })
   userRoles: string[];
 
-  @OneToOne(() => Manager)
+  @OneToOne(() => Manager, {
+    eager: true,
+  })
   manager: Manager;
 
-  @OneToOne(() => Employee)
+  @OneToOne(() => Employee, {
+    eager: true,
+  })
   employee: Employee;
 }
