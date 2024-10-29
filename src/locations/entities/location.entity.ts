@@ -1,47 +1,48 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { Employee } from "src/employees/entities/employee.entity";
+import { Manager } from "src/managers/entities/manager.entity";
+import { Region } from "src/regions/entities/region.entity";
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
+  Column,
   OneToOne,
   JoinColumn,
   ManyToOne,
   OneToMany,
 } from "typeorm";
-import { Manager } from "src/managers/entities/manager.entity";
-import { Region } from "src/regions/entities/region.entity";
-import { Employee } from "src/employees/entities/employee.entity";
-import { ApiProperty } from "@nestjs/swagger";
+
 @Entity()
 export class Location {
   @PrimaryGeneratedColumn("increment")
   locationId: number;
 
   @ApiProperty({
-    default: "Oxxo Juriquilla",
+    default: "OCSO Juriquilla",
   })
-  @Column({ type: "text" })
+  @Column("text")
   locationName: string;
 
   @ApiProperty({
-    default: "Av. Paseo de la República 123, Juriquilla, Querétaro",
+    default: "Avenida Tal, S/N, 76220",
   })
-  @Column({ type: "text" })
+  @Column("text")
   locationAddress: string;
 
   @ApiProperty({
-    default: [20.722, -100.442],
+    default: [12, 12],
   })
-  @Column({ type: "simple-array" })
+  @Column("simple-array")
   locationLatLng: number[];
 
-  //Relation managers
+  @ApiProperty({ default: "1b1434ad-5e6c-4ee3-806d-74406d65c714" })
   @OneToOne(() => Manager, {
     eager: true,
   })
   @JoinColumn({
     name: "managerId",
   })
-  manager: Manager;
+  manager: Manager | string;
 
   @ManyToOne(() => Region, (region) => region.locations)
   @JoinColumn({

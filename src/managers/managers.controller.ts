@@ -14,25 +14,25 @@ import { Auth } from "src/auth/decorators/auth.decorator";
 import { ROLES } from "src/auth/constants/roles.constants";
 import { ApiAuth } from "src/auth/decorators/api.decorator";
 import { ApiTags } from "@nestjs/swagger";
-@ApiAuth()
+// @ApiAuth()
 @ApiTags("MANAGERS")
 @Controller("managers")
 export class ManagersController {
   constructor(private readonly managersService: ManagersService) {}
 
-  @Auth()
+  // @Auth()
   @Post()
   create(@Body() createManagerDto: CreateManagerDto) {
     return this.managersService.create(createManagerDto);
   }
 
-  @Auth()
+  // @Auth()
   @Get()
   findAll() {
     return this.managersService.findAll();
   }
 
-  @Auth()
+  // @Auth()
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.managersService.findOne(id);

@@ -47,5 +47,8 @@ export class ProvidersService {
     this.providersRepository.delete({
       providerId: id,
     });
+    return {
+      message: "Provider deleted",
+    };
   }
 }
