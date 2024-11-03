@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsNumber,
   MaxLength,
-  IsObject,
   IsOptional,
 } from "class-validator";
 import { Manager } from "../entities/manager.entity";
@@ -21,7 +20,7 @@ export class CreateManagerDto extends Manager {
   @MaxLength(16)
   managerPhoneNumber: string;
   //Relation locations
-  @IsObject()
+  @IsNumber()
   @IsOptional()
   location: Location;
 }
