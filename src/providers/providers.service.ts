@@ -18,7 +18,11 @@ export class ProvidersService {
   }
 
   findAll() {
-    return this.providersRepository.find();
+    return this.providersRepository.find({
+      relations: {
+        products: true,
+      },
+    });
   }
 
   async findOneByName(name: string) {
@@ -30,8 +34,11 @@ export class ProvidersService {
   }
 
   findOne(id: string) {
-    return this.providersRepository.findOneBy({
-      providerId: id,
+    return this.providersRepository.findOne({
+      where: { providerId: id },
+      relations: {
+        products: true,
+      },
     });
   }
 

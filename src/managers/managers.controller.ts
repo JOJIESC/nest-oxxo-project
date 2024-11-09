@@ -38,13 +38,13 @@ export class ManagersController {
     return this.managersService.findOne(id);
   }
 
-  @Auth(ROLES.MANAGER)
+  // @Auth(ROLES.MANAGER)
   @Patch(":id")
   update(@Param("id") id: string, @Body() updateManagerDto: UpdateManagerDto) {
     return this.managersService.update(id, updateManagerDto);
   }
 
-  @Auth()
+  // @Auth()
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.managersService.remove(id);
