@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Patch, Post, Res } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Res,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { LoginUserDto } from "./dto/login-user.dto";
@@ -14,25 +22,52 @@ import { Cookies } from "./decorators/cookies.decorator";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("signup")
-  signUp(@Body() CreateUserDto: CreateUserDto) {
-    return this.authService.registerUser(CreateUserDto);
+  @Post("register/employee/[id]")
+  registerEmployee(
+    @Body() createUserDto: CreateUserDto,
+    @Param("id") id: string
+  ) {
+    if (
+      createUserDto.userRoles.includes("Admin") ||
+      createUserDto.userRoles.includes("Manager")
+    ) {
+      throw new BadRequestException("Rol invalido");
+    }
+    return this.authService.registerEmployee(id, createUserDto);
+  }
+
+  @Post("register/manager")
+  registerManager(
+    @Body() createUserDto: CreateUserDto,
+    @Param("id") id: string
+  ) {
+    if (
+      createUserDto.userRoles.includes("Admin") ||
+      createUserDto.userRoles.includes("Employee")
+    ) {
+      throw new BadRequestException("Rol invalido");
+    }
+    return this.authService.registerManager(id, createUserDto);
   }
 
   @Post("login")
-  login(
+  async login(
     @Body() loginUserDto: LoginUserDto,
     @Res({ passthrough: true }) response: Response,
     @Cookies() cookies: any
   ) {
-    const token = this.authService.loginUser(loginUserDto);
+    const token = await this.authService.loginUser(loginUserDto);
+    let expireDate = new Date();
+    expireDate.setDate(expireDate.getDay() + 7);
     response.cookie(TOKEN_NAME, token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: process.env.cookiesDomain,
+      expires: expireDate,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
-    return token;
+    return;
   }
 
   @Patch("/:email")
