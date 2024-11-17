@@ -22,6 +22,6 @@ export class CreateProductDto extends Product {
   productPrice: number;
   @IsInt()
   countSeal: number;
-  @IsObject()
-  provider: Provider;
+  @IsString()
+  provider: Provider | string;
 }
