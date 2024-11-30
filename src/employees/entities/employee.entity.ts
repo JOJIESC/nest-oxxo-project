@@ -11,7 +11,7 @@ import { User } from "src/auth/entities/user.entity";
 
 @Entity()
 export class Employee {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   employeeId: string;
   @Column({ type: "text" })
   employeeName: string;

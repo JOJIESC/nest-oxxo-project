@@ -1,4 +1,9 @@
-import { Body, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { Repository } from "typeorm";
@@ -21,24 +26,32 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async registerEmployee(Id: string, createUserDto: CreateUserDto) {
+  async registerEmployee(id: string, createUserDto: CreateUserDto) {
+    const roles = createUserDto.userRoles;
+    if (roles.includes("Admin") || roles.includes("Manager")) {
+      throw new BadRequestException("Invalid");
+    }
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
     const user = await this.userRepository.save(createUserDto);
     const employee = await this.employeeRepository.preload({
-      employeeId: Id,
+      employeeId: id,
     });
     employee.user = user;
     return this.employeeRepository.save(employee);
   }
 
-  async registerManager(Id: string, createUserDto: CreateUserDto) {
+  async registerManager(id: string, createUserDto: CreateUserDto) {
+    const roles = createUserDto.userRoles;
+    if (roles.includes("Admin") || roles.includes("Employee")) {
+      throw new BadRequestException("Invalid");
+    }
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
     const user = await this.userRepository.save(createUserDto);
-    const managerToUpdate = await this.managerRepository.preload({
-      managerId: Id,
+    const manager = await this.managerRepository.preload({
+      managerId: id,
     });
-    managerToUpdate.user = user;
-    return this.managerRepository.save(managerToUpdate);
+    manager.user = user;
+    return this.managerRepository.save(manager);
   }
 
   async loginUser(loginUserDto: LoginUserDto) {

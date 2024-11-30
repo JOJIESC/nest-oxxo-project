@@ -16,6 +16,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
 import { TOKEN_NAME } from "./constants/jwt.constants";
 import { Cookies } from "./decorators/cookies.decorator";
+import { Query } from "@nestjs/common";
 @ApiAuth()
 @ApiTags("AUTH")
 @Controller("auth")
@@ -36,18 +37,18 @@ export class AuthController {
     return this.authService.registerEmployee(id, createUserDto);
   }
 
-  @Post("register/manager")
+  @Post("register/:id")
   registerManager(
+    @Query("role") role: string,
     @Body() createUserDto: CreateUserDto,
     @Param("id") id: string
   ) {
-    if (
-      createUserDto.userRoles.includes("Admin") ||
-      createUserDto.userRoles.includes("Employee")
-    ) {
-      throw new BadRequestException("Rol invalido");
+    if (role === "manager") {
+      return this.authService.registerManager(id, createUserDto);
+    } else if (role === "employee") {
+      return this.authService.registerEmployee(id, createUserDto);
     }
-    return this.authService.registerManager(id, createUserDto);
+    throw new BadRequestException("Rol inválido");
   }
 
   @Post("login")
