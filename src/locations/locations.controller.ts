@@ -14,31 +14,31 @@ import { Auth } from "src/auth/decorators/auth.decorator";
 import { ROLES } from "src/auth/constants/roles.constants";
 import { ApiAuth } from "src/auth/decorators/api.decorator";
 import { ApiTags } from "@nestjs/swagger";
-//@ApiAuth()
+@ApiAuth()
 @ApiTags("LOCATIONS")
 @Controller("locations")
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
-  // @Auth()
+  @Auth()
   @Post()
   create(@Body() createLocationDto: CreateLocationDto) {
     return this.locationsService.create(createLocationDto);
   }
 
-  // @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
+  @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
   @Get()
   findAll() {
     return this.locationsService.findAll();
   }
 
-  // @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
+  @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.locationsService.findOne(+id);
   }
 
-  // @Auth()
+  @Auth()
   @Patch(":id")
   update(
     @Param("id") id: string,
@@ -47,7 +47,7 @@ export class LocationsController {
     return this.locationsService.update(+id, updateLocationDto);
   }
 
-  // @Auth()
+  @Auth()
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.locationsService.remove(+id);
