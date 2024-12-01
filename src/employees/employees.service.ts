@@ -20,6 +20,7 @@ export class EmployeesService {
     return this.employeeRepository.find({
       relations: {
         location: true,
+        user: true,
       },
     });
   }
@@ -39,6 +40,7 @@ export class EmployeesService {
       },
       relations: {
         location: true,
+        user: true,
       },
     });
     return employee;
